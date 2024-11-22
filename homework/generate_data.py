@@ -47,6 +47,28 @@ def save_fake_data(fake_data, filename):
             writer.writerow(record)
 
 
+def generate_fake_timesheet(drivers, n):
+    """Generate n fake timesheet records.
+    Each record has the following fields:
+    - driverId: int (unique)
+    - week: int (1-52)
+    - hours-logged: int (0, 50-80)
+    - miles-logged: int (0-40) * 100
+
+    """
+    timesheet = []
+    for i in tqdm(range(n), desc="timesheet"):
+        record = {
+            "driverId": fake.random_element(elements=drivers)["driverId"],
+            "week": fake.random_int(min=1, max=52),
+            "hours-logged": fake.random_int(min=50, max=80),
+            "miles-logged": fake.random_int(min=0, max=40) * 100,
+        }
+        timesheet.append(record)
+
+    return timesheet
+
+
 if __name__ == "__main__":
     # Generate fake data
     fake_drivers = generate_fake_drivers(100)
@@ -55,3 +77,10 @@ if __name__ == "__main__":
     if not os.path.exists("files"):
         os.makedirs("files")
     save_fake_data(fake_drivers, "files/drivers.csv")
+
+    fake_timesheet = generate_fake_timesheet(fake_drivers, 100)
+
+    # Save fake data to CSV files
+    if not os.path.exists("files"):
+        os.makedirs("files")
+    save_fake_data(fake_timesheet, "files/timesheet.csv")
